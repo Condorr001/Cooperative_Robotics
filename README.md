@@ -1,4 +1,4 @@
-# Cooperative_Robotics
+# Cooperative Robotics projects.
 This repository contains all the projects developed for Cooperative Robotics course during Master Degree in Robotics Engineering at University of Genoa. 
 
 ## Exercise 1
