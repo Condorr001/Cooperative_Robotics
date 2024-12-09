@@ -24,62 +24,31 @@ pandaArm.jlmax = [2.8973;1.7628;2.8973;-0.0698;2.8973;3.7525;2.8973];
 % Init relevance Jacobians
 pandaArm.ArmL.bJe = eye(6,7);
 pandaArm.ArmR.bJe = eye(6,7);
-pandaArm.Jjl = zeros(12, 14);
-pandaArm.Jma = zeros(12, 14);
-pandaArm.Jrc = zeros(12, 14);
+pandaArm.Jjl = [];
+pandaArm.Jrc = zeros(6,14);
 
 %% ... TO HERE
-% Init Task Reference vectors
-pandaArm.xdot.rc = zeros(12, 1);
 
-% Left arm
-pandaArm.ArmL.xdot.jl = zeros(6, 1);
-pandaArm.ArmL.xdot.tool = zeros(6, 1);
-
-pandaArm.ArmL.wTt = zeros(4);
-pandaArm.ArmL.wTg = zeros(4);
-pandaArm.ArmL.wTo = zeros(4);
-pandaArm.ArmL.tTo = zeros(4);
-
-pandaArm.ArmL.wSt = zeros(6);
-% pandaArm.ArmR.Jt_a = [];
-% pandaArm.ArmR.Jt_v = [];
-pandaArm.ArmL.wJt = zeros(6, 7);
-% pandaArm.ArmR.Sto = [];
-% pandaArm.ArmR.wJo = [];
-
+% Init current altitude of each arm
 pandaArm.ArmL.altitude = 0;
-
-% Right arm
-pandaArm.ArmR.xdot.jl = zeros(6, 1);
-pandaArm.ArmR.xdot.tool = zeros(6, 1);
-
-pandaArm.ArmR.wTt = zeros(4);
-pandaArm.ArmR.wTg = zeros(4);
-pandaArm.ArmR.wTo = zeros(4);
-pandaArm.ArmR.tTo = zeros(4);
-
-pandaArm.ArmR.wSt = zeros(6);
-% pandaArm.ArmR.Jt_a = [];
-% pandaArm.ArmR.Jt_v = [];
-pandaArm.ArmR.wJt = zeros(6, 7);
-% pandaArm.ArmR.Sto = [];
-% pandaArm.ArmR.wJo = [];
-
 pandaArm.ArmR.altitude = 0;
 
+% Init Task Reference vectors
+pandaArm.ArmL.xdot.tool = zeros(6,1);
+pandaArm.ArmR.xdot.tool = zeros(6,1);
+
+pandaArm.ArmL.xdot.jl = zeros(6,1);
+pandaArm.ArmR.xdot.jl = zeros(6,1);
+
+pandaArm.ArmL.xdot.alt = zeros(6,1);
+pandaArm.ArmR.xdot.alt = zeros(6,1);
+
+pandaArm.xdot.rc = zeros(6,1);
+
 % Init Activation function for activate or deactivate tasks
-% tool and rigid constraint consider angular and linear velocities
-pandaArm.ArmL.A.tool = zeros(6);
-pandaArm.ArmR.A.tool = zeros(6);
-pandaArm.A.rc = zeros(12);
-% jl is a matrix
-pandaArm.ArmL.A.jl = zeros(7);
-pandaArm.ArmR.A.jl = zeros(7);
-pandaArm.A.ma = zeros(12);
-
-
-
+pandaArm.A.tool = zeros(12);
+pandaArm.A.jl = zeros(12);
+pandaArm.A.rc = zeros(6);
 
 end
 

@@ -27,7 +27,7 @@ pandaArm.ArmR.bJe = geometricJacobian(pandaArm.ArmR.franka, ...
     [pandaArm.ArmR.q',0,0],'panda_link7');%DO NOT EDIT
 pandaArm.ArmR.bJe = pandaArm.ArmR.bJe (:,1:7);
 
-% Top three rows are angular velocities, bottom three linear velocities
+%% Top three rows are angular velocities, bottom three linear velocities
 wSt_L = eye(6);
 wSt_L(4:6, 1:3) = (skew(pandaArm.ArmL.wTe(1:3,1:3) * pandaArm.ArmL.eTt(1:3,4)))';
 % wSt_L = [eye(3), zeros(3); (skew(pandaArm.ArmL.wTe(1:3,1:3) * pandaArm.ArmL.eTt(1:3,4)))', eye(3)];
@@ -43,7 +43,7 @@ wSt_R(4:6, 1:3) = (skew(pandaArm.ArmR.wTb(1:3,1:3) * pandaArm.ArmR.bTe(1:3,1:3) 
 pandaArm.ArmR.wSt = wSt_R;
 pandaArm.ArmR.wJt = wSt_R * ([pandaArm.ArmR.wTb(1:3,1:3) zeros(3); zeros(3) pandaArm.ArmR.wTb(1:3,1:3)] * pandaArm.ArmR.bJe); % 6x6 * (6x6 * 6x7)
 
-if (mission.phase == 2) % so if the robot is grasping an object
+if (mission.phase == 2)  % so if the robot is grasping an object
     tTo_L_pos = pandaArm.ArmL.wTo(1:3,4) - pandaArm.ArmL.wTt(1:3,4); % distance between frames <o> and <t> 
     wSo_L = eye(6);
     wSo_L(4:6, 1:3) = -skew(tTo_L_pos);
@@ -57,15 +57,15 @@ if (mission.phase == 2) % so if the robot is grasping an object
     pandaArm.ArmR.wJo = wSo_R * pandaArm.ArmR.wJt; 
 
     pandaArm.Jrc = [pandaArm.ArmL.wJo -pandaArm.ArmR.wJo]; 
-end
-
-% Common Jacobians
+end 
+% Common Jacobians 
+ 
 % joint limits 
 pandaArm.Jjl = eye(14); %identity because we directly control the velocity of the joints
+ 
 % minimum altitude 
 % For the minimum altitude jacobian, we take the z-coordinate of the tool, 
 % so the last row of the jacobian wJt
-% pandaArm.Jma = [pandaArm.ArmL.wJt(6,:) zeros(1,7); zeros(1,7) pandaArm.ArmR.wJt(6,:)]; % m x 14 -> 12 x 14
-pandaArm.Jma = [pandaArm.ArmL.wJt, zeros(6,7); pandaArm.ArmR.wJt, zeros(6,7)];
-
+pandaArm.Jma = [pandaArm.ArmL.wJt(6,:) zeros(1,7); zeros(1,7) pandaArm.ArmR.wJt(6,:)]; 
+ 
 end

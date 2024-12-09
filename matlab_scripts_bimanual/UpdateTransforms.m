@@ -17,21 +17,18 @@ pandaArm.ArmR.wTe = pandaArm.ArmR.wTb * pandaArm.ArmR.bTe;
 pandaArm.ArmL.wTt = pandaArm.ArmL.wTe * pandaArm.ArmL.eTt;
 pandaArm.ArmR.wTt = pandaArm.ArmR.wTe * pandaArm.ArmR.eTt;
 
+if(mission.phase == 1)
+    tRw_L = pandaArm.ArmL.wTt(1:3,1:3)';    % rotation
+    wrt_L = pandaArm.ArmL.wTt(1:3,4);      % position
+    pandaArm.ArmL.tTo = [tRw_L -tRw_L'*wrt_L; 0 0 0 1] * pandaArm.ArmL.wTo;
+
+    tRw_R = pandaArm.ArmR.wTt(1:3,1:3)';
+    wrt_R = pandaArm.ArmR.wTt(1:3,4);    
+    pandaArm.ArmR.tTo = [tRw_R -tRw_R*wrt_R; 0 0 0 1] * pandaArm.ArmR.wTo;
+end
+
 % <o> to <w> : ASSUME <t> = <g> during entire cooperation phase
 if (mission.phase == 2)
-    % if size(pandaArm.ArmL.wTo) == 0
-    %     wTb_right = [cos(pi), -sin(pi), 0, 1.06;
-    %          sin(pi), cos(pi), 0, -0.01;
-    %          0,             0, 1,     0;
-    %          0,             0, 0,     1]; % fixed transformation word -> base2
-    % 
-    %     pandaArms.ArmL.wTo = eye(4);
-    %     pandaArms.ArmL.wTo(1:3, 4) = w_obj_pos;
-    %     pandaArms.ArmR.wTo = wTb_right' * pandaArms.ArmL.wTo;
-    %     pandaArm.ArmL.tTo = inv(pandaArm.ArmL.wTt) * pandaArm.ArmL.wTo;
-    %     pandaArm.ArmR.tTo = inv(pandaArm.ArmR.wTt) * pandaArm.ArmR.wTo;
-    % end
-
     pandaArm.ArmL.wTo = pandaArm.ArmL.wTt * pandaArm.ArmL.tTo; 
     pandaArm.ArmR.wTo = pandaArm.ArmR.wTt * pandaArm.ArmR.tTo;
     

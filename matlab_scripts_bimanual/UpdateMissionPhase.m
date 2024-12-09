@@ -6,35 +6,32 @@ function [pandaArm, mission] = UpdateMissionPhase(pandaArm, mission)
                 [angR, linR] = CartError(pandaArm.ArmR.wTg, pandaArm.ArmR.wTt);
                 
                 % max error: 1/10 cm and 1deg
-                % if (norm(angL) < deg2rad(1) && norm(linL(1:2)) < 0.001 && norm(ang_R) < 1 && norm(lin_R(1:2)) < 0.001)
-                if (norm(angL) < deg2rad(1) && norm(linL) < 0.001 && norm(angR) < deg2rad(1) && norm(linR) < 0.001)
-                    mission.phase = 2;
-                    mission.phase_time = 0;
-                    mission.previous_action = mission.current_action;
-                    mission.current_action = "coop_manip";
+                if(norm(angL) <= deg2rad(1) && norm(linL) <= 0.001 && norm(angR) <= deg2rad(1) && norm(linR) <= 0.001)
+                     mission.phase = 2;
+                     mission.phase_time = 0;                     
+                     mission.prev_action = mission.current_action;
+                     mission.current_action = "coop_manip";                 
                 end
 
-                % debug
-                display('go_to task');
-
+                disp("Moving");
+                
             case 2 % Cooperative Manipulation Start 
                 % computing the errors for the rigid move-to task
-                [angL, linL] = CartError(pandaArm.wTog, pandaArm.ArmL.wTo);
+                [angL, linL] = CartError(pandaArm.wTog, pandaArm.ArmL.wTo);                
                 [angR, linR] = CartError(pandaArm.wTog, pandaArm.ArmR.wTo);
 
                 % max error: 1 cm and 3deg
-                if (norm(angL) < deg2rad(3) && norm(linL) < 0.01 && norm(angR) < deg2rad(3) && norm(linR) < 0.01)
-                    mission.phase = 3;
-                    mission.phase_time = 0;
-                    mission.previous_action = mission.current_action;
-                    mission.current_action = "end_motion";
+                if(norm(angL) <= deg2rad(3) && norm(linL) <= 0.01 && norm(angR) <= deg2rad(3) && norm(linR) <= 0.01)
+                     mission.phase = 3;                     
+                     mission.phase_time = 0;
+                     mission.prev_action = mission.current_action;                     
+                     mission.current_action = "end_motion";
                 end
-
-                display('Grabbing');
                
+                disp("Grabbing");
+
             case 3 % Finish motion
-                display('Finished');
-                
+                disp("Finished");
         end
 end
 

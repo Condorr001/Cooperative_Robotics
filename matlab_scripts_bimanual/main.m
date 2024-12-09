@@ -1,16 +1,15 @@
-%% Template Exercises Manipulation - Cooperative Robotics a.y. 24-25
+function main()     
 addpath('./simulation_scripts');
 clc;
 clear;
 close all
 real_robot = false;
-
 %% Initialization - DON'T CHANGE ANYTHING from HERE ... 
 % Simulation variables (integration and final time)
 dt = 0.005;
-Tf = 15; %simulation time
+end_time = 15;
 loop = 1;
-maxloops = ceil(Tf/dt);
+maxloops = ceil(end_time/dt);
 mission.phase = 1;
 mission.phase_time = 0;
 model = load("panda.mat");
@@ -24,11 +23,10 @@ if real_robot == true
     hudpsRight = dsp.UDPSender('RemoteIPPort',1502);
     hudpsRight.RemoteIPAddress = '127.0.0.1';
 else
-    hudps = dsp.UDPSender('RemoteIPPort',1505);
+    hudps = dsp.UDPSender('RemoteIPPort',1500);
     hudps.RemoteIPAddress = '127.0.0.1';
 end
 %% ... to HERE.
-
 % Init robot model
 % The left arm base coincides with the world frame
 wTb_left = eye(4); % fixed transformation word -> base1
@@ -39,19 +37,18 @@ wTb_right = [cos(pi), -sin(pi), 0, 1.06;
 
 plt = InitDataPlot(maxloops);
 pandaArms = InitRobot(model,wTb_left,wTb_right);
-
 % Init object and tools frames
-obj_length = 0.1;
+obj_length = 0.12;
 w_obj_pos = [0.5 0 0.59]';
-w_obj_ori = rotation(0,0,0);
 % ArmL = arm left -> wTo = position of the object w.r.t. the world
 % Define transformation matrix from object to world.
 pandaArms.ArmL.wTo = eye(4);
 pandaArms.ArmL.wTo(1:3, 4) = w_obj_pos;
-pandaArms.ArmR.wTo = wTb_right' * pandaArms.ArmL.wTo;
+pandaArms.ArmR.wTo = pandaArms.ArmL.wTo;
 
-theta = deg2rad(-44.9949);% FIXED ANGLE BETWEEN EE AND TOOL 
-tool_length = 0.2124;% FIXED DISTANCE BETWEEN EE AND TOOL
+theta = deg2rad(-44.9949);
+tool_length = 0.2104;   
+
 % Define transformation matrix from ee to tool.
 eRt = [cos(theta), -sin(theta), 0;
        sin(theta), cos(theta),  0;
@@ -69,19 +66,16 @@ pandaArms.ArmL.wTt = pandaArms.ArmL.wTe * pandaArms.ArmL.eTt;
 pandaArms.ArmR.wTt = pandaArms.ArmR.wTe * pandaArms.ArmR.eTt;
 
 %% Defines the goal position for the end-effector/tool position task
-% First goal reach the grasping points.
+% First goal reach the grasping points (Reach the object)
 alpha = pi/6;
 tRg = [cos(alpha),  0, -sin(alpha);
        0,           1,          0;
        -sin(alpha), 0,  cos(alpha)];
-l_obj = 0.12;
+grasping_left = w_obj_pos - [obj_length/2 0 0]';
+grasping_right = w_obj_pos + [obj_length/2 0 0]';
 
-pandaArms.ArmL.wTg = eye(4);
-% the center of the object <o> is the current goal <g> for the tools
-pandaArms.ArmL.wTg(1:3, 1:3) = pandaArms.ArmL.wTt(1:3, 1:3) * tRg;
-pandaArms.ArmL.wTg(1:3, 4) = [0.5-l_obj/2, 0, 0.59]';
-pandaArms.ArmR.wTg(1:3, 1:3) = pandaArms.ArmL.wTt(1:3, 1:3) * tRg;
-pandaArms.ArmR.wTg(1:3, 4) = [0.5+l_obj/2, 0, 0.59]';
+pandaArms.ArmL.wTg = [pandaArms.ArmL.wTt(1:3,1:3) * tRg, grasping_left; 0 0 0 1];
+pandaArms.ArmR.wTg = [pandaArms.ArmR.wTt(1:3,1:3) * tRg, grasping_right; 0 0 0 1];
 
 % Second goal move the object
 w_g_pos = [0.65 -0.35 0.28]';
@@ -94,6 +88,7 @@ mission.current_action = "go_to";
 
 mission.phase = 1;
 mission.phase_time = 0;
+
 % Define the active tasks for each phase of the mission
 % Suggested Name for the task
 % T = move tool task
@@ -101,14 +96,13 @@ mission.phase_time = 0;
 % MA = minimum altitude task
 % RC = rigid constraint task
 
-mission.actions.go_to.tasks = ["JL", "MA", "T"];
-mission.actions.coop_manip.tasks = ["JL", "RC", "MA", "T"];
-mission.actions.end_motion.tasks = ["JL", "MA"];
+mission.actions.go_to.tasks = ["MA","JL","T"];
+mission.actions.coop_manip.tasks = ["MA","JL","RC","T"];
+mission.actions.end_motion.tasks = ["MA", "JL"]; 
 
 %% CONTROL LOOP
 disp('STARTED THE SIMULATION');
-
-for t = 0:dt:Tf
+for t = 0:dt:end_time
     % Receive UDP packets - DO NOT EDIT
     if real_robot == true
         dataLeft = step(hudprLeft);
@@ -158,7 +152,7 @@ for t = 0:dt:Tf
         tool_jacobian_R = pandaArms.ArmR.wJo;
     end
 
-    % ADD distance from table
+    % ADD minimum distance from table
     pandaArms.ArmL.altitude = pandaArms.ArmL.wTt(3,4);
     pandaArms.ArmR.altitude = pandaArms.ArmR.wTt(3,4);
 
@@ -168,18 +162,14 @@ for t = 0:dt:Tf
     % Bimanual system TPIK
     % ...
     % Task: Tool Move-To
-    if mission.phase == 2
-        [Qp, ydotbar] = iCAT_task(pandaArms.A.rc, pandaArms.Jrc, Qp, ydotbar, pandaArms.xdot.rc, 0.0001, 0.01, 10);  % RC
-        size(pandaArms.xdot.rc)
-    end
-    size([pandaArms.ArmL.xdot.alt; pandaArms.ArmR.xdot.alt])
+    [Qp, ydotbar] = iCAT_task(pandaArms.A.rc, pandaArms.Jrc, Qp, ydotbar, pandaArms.xdot.rc, 0.0001, 0.01, 10);  % RC
     [Qp, ydotbar] = iCAT_task(pandaArms.A.ma, pandaArms.Jma, Qp, ydotbar, [pandaArms.ArmL.xdot.alt; pandaArms.ArmR.xdot.alt], 0.0001, 0.01, 10);  % MA
     [Qp, ydotbar] = iCAT_task(pandaArms.A.jl, pandaArms.Jjl, Qp, ydotbar, [pandaArms.ArmL.xdot.jl; pandaArms.ArmR.xdot.jl], 0.0001, 0.01, 10);  % JL
     [Qp, ydotbar] = iCAT_task(pandaArms.A.tool, [tool_jacobian_L zeros(6,7); zeros(6,7) tool_jacobian_R], Qp, ydotbar, [pandaArms.ArmL.xdot.tool; pandaArms.ArmR.xdot.tool], 0.0001, 0.01, 10); % tool position and orientation
     [Qp, ydotbar] = iCAT_task(eye(14),     eye(14),    ...
         Qp, ydotbar, zeros(14,1),  ...
         0.0001,   0.01, 10);    % this task should be the last one
-
+ 
     % get the two variables for integration
     pandaArms.ArmL.q_dot = ydotbar(1:7);
     pandaArms.ArmR.q_dot = ydotbar(8:14);
@@ -211,21 +201,27 @@ for t = 0:dt:Tf
     loop = loop + 1;
     % add debug prints here
     if (mod(t,0.1) == 0)
-        t 
-        phase = mission.phase
         if (mission.phase == 1)
             %add debug prints phase 1 here
+            [ang, lin] = CartError(pandaArms.ArmR.wTt, pandaArms.ArmL.wTt);
+            disp("Angular Distance: " + num2str(ang'));
+            disp("Linear Distance: " + num2str(lin'));
+
         elseif (mission.phase == 2)
-            %add debug prints phase 2 here
+            %add debug prints phase 2 here                      
+            disp("ArmL z (altitude): " + num2str(pandaArms.ArmL.wTt(3,4)));
+            disp("ArmR z (altitude): " + num2str(pandaArms.ArmR.wTt(3,4)));            
+            disp("ArmL tool vel: " + num2str(pandaArms.ArmL.xdot.tool'));
+            disp("ArmR tool vel: " + num2str(pandaArms.ArmR.xdot.tool'));            
         end
     end
     
     % enable this to have the simulation approximately evolving like real
     % time. Remove to go as fast as possible
     % WARNING: MUST BE ENABLED IF CONTROLLING REAL ROBOT !
-    SlowdownToRealtime(dt);
+    % SlowdownToRealtime(dt);
     
 end
 
-% PrintPlot(plt, pandaArms);
-% end
+PrintPlot(plt, pandaArms);
+end
