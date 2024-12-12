@@ -11,9 +11,9 @@ function [A] = ActionTransition(taskname, previous, current, time)
 % movement of the two arms would not be synchronized, which could cause
 % faults and damages, other than an inclination of the object.
 if (ismember(taskname, previous) == 0 && ismember(taskname, current) && taskname == "RC")
-    A = IncreasingBellShapedFunction(0, 0.01, 0, 1, time);
+    A = 1;
 elseif ((ismember(taskname, previous) && ismember(taskname, current) == 0) && taskname == "RC")
-    A = DecreasingBellShapedFunction(0, 0.01, 0, 1, time);
+    A = 0;
 elseif (ismember(taskname, previous) && ismember(taskname, current))
     A = 1;    
 elseif (ismember(taskname, previous) == 0 && ismember(taskname, current))
