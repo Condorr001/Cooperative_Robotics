@@ -55,7 +55,7 @@ delta_ma = 0.05;
 pandaArm.A.ArmL.ma = DecreasingBellShapedFunction(min_alt, min_alt+delta_ma, 0, 1, pandaArm.ArmL.altitude) * ActionTransition("MA", prev, current, mission.phase_time);
 pandaArm.A.ArmR.ma = DecreasingBellShapedFunction(min_alt, min_alt+delta_ma, 0, 1, pandaArm.ArmR.altitude) * ActionTransition("MA", prev, current, mission.phase_time);
 
-pandaArm.A.ma = [pandaArm.A.ArmL.ma 0; 0 pandaArm.A.ArmR.ma] .* ActionTransition("MA", prev, current, mission.phase_time);
+pandaArm.A.ma = [pandaArm.A.ArmL.ma 0; 0 pandaArm.A.ArmR.ma];
 
 % Joint Limits Task
 % Activation function: two combined sigmoids, which are at their maximum 

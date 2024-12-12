@@ -24,7 +24,7 @@ if real_robot == true
     hudpsRight.RemoteIPAddress = '127.0.0.1';
 else
     hudps = dsp.UDPSender('RemoteIPPort',1500);
-    hudps.RemoteIPAddress = '127.0.0.1';
+    hudps.RemoteIPAddress = '130.251.36.137';
 end
 %% ... to HERE.
 % Init robot model
