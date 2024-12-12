@@ -155,10 +155,7 @@ for t = 0:deltat:end_time
 
     % add all the other tasks here!
     % the sequence of iCAT_task calls defines the priority
-
-    ydotbar_init = ydotbar;
-    ydotbar2_init = ydotbar2;
-
+    
     % First Manipulator TPIK (left)
     % Task: Tool Move-To
     % [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
@@ -240,7 +237,7 @@ for t = 0:deltat:end_time
         feasible_coop_xdot = [H1 zeros(6); zeros(6) H2] * (eye(12) - pinv(C)*C) * [coop_xdot1; coop_xdot2];
     
         % Task: Arm1 (Left Arm) Cooperation
-        [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar_init, feasible_coop_xdot(1:6), 0.0001, 0.01, 10);  % MM
+        [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, feasible_coop_xdot(1:6), 0.0001, 0.01, 10);  % MM
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);   % JL
@@ -248,7 +245,7 @@ for t = 0:deltat:end_time
         [Qp, ydotbar] = iCAT_task(eye(7), eye(7), Qp, ydotbar, zeros(7,1), 0.0001,   0.01, 10);   % this task should be the last one
     
         % Task: Arm2 (Right Arm) Cooperation
-        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2_init, feasible_coop_xdot(7:12), 0.0001, 0.01, 10); % MM
+        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, feasible_coop_xdot(7:12), 0.0001, 0.01, 10); % MM
         [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
         [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
         [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);   % JL
