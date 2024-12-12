@@ -22,17 +22,14 @@ if real_robot == true
     hudpsRight = dsp.UDPSender('RemoteIPPort',1502);
     hudpsRight.RemoteIPAddress = '127.0.0.1';
 else
-    hudps = dsp.UDPSender('RemoteIPPort',1505);
+    hudps = dsp.UDPSender('RemoteIPPort',1500);
     hudps.RemoteIPAddress = '127.0.0.1';
 end
 %% TO HERE
 
 % Init robot model
 wTb_left = eye(4); %fixed transformation word -> base left
-wTb_right = [cos(pi), -sin(pi), 0, 1.06;
-             sin(pi), cos(pi), 0, -0.01;
-             0,             0, 1,     0;
-             0,             0, 0,     1]; %fixed transformation word -> base right
+wTb_right = [rotation(0, 0, pi), [1.06, -0.01, 0]'; 0, 0, 0, 1]; %fixed transformation word -> base right
 pandaArm1 = InitRobot(model,wTb_left);
 pandaArm2 = InitRobot(model,wTb_right);
 
@@ -42,10 +39,8 @@ plt = InitDataPlot(maxloops);
 % Init object frame
 obj_length = 0.06;
 w_obj_pos = [0.5 0 0.3]';
-%w_obj_ori = rotation(0, deg2rad(20), 0);
 
 pandaArm1.wTo = eye(4);
-%pandaArm1.wTo(1:3, 1:3) = w_obj_ori;
 pandaArm1.wTo(1:3, 4) = w_obj_pos;
 pandaArm2.wTo = pandaArm1.wTo;
 
@@ -53,10 +48,7 @@ theta = deg2rad(-44.9949); % FIXED ANGLE BETWEEN EE AND TOOL
 tool_length = 0.2124; % FIXED DISTANCE BETWEEN EE AND TOOL
 
 % Define trasnformation matrix from ee to tool.
-eRt = [cos(theta), -sin(theta), 0;
-       sin(theta), cos(theta),  0;
-       0,                   0,  1];
-
+eRt = rotation(0, 0, theta);
 pandaArm1.eTt = eye(4);
 pandaArm1.eTt(1:3, 1:3) = eRt;
 pandaArm1.eTt(1:3, 4) = [0, 0, tool_length]';
@@ -68,8 +60,7 @@ pandaArm2.wTt = pandaArm2.wTe * pandaArm2.eTt;
 
 %% Defines the goal position for the end-effector/tool position task
 % First goal reach the grasping points.
-alpha = deg2rad(20);
-tRg = rotation(0, alpha, 0);
+tRg = rotation(0, deg2rad(20), 0);
 grasping1 = w_obj_pos - [obj_length/2 0 0]';
 grasping2 = w_obj_pos + [obj_length/2 0 0]';
 
@@ -85,7 +76,6 @@ pandaArm2.wTog = eye(4);
 pandaArm2.wTog(1:3, 4) = w_g_pos;
 
 %% Mission configuration
-
 mission.prev_action = "go_to";
 mission.current_action = "go_to";
 
@@ -130,7 +120,7 @@ for t = 0:deltat:end_time
     [pandaArm1] = ComputeJacobians(pandaArm1,mission);
     [pandaArm2] = ComputeJacobians(pandaArm2,mission);
     [pandaArm1] = ComputeActivationFunctions(pandaArm1,mission);
-    [pandaArm2] = ComputeActisvationFunctions(pandaArm2,mission);
+    [pandaArm2] = ComputeActivationFunctions(pandaArm2,mission);
     [pandaArm1] = ComputeTaskReferences(pandaArm1,mission);
     [pandaArm2] = ComputeTaskReferences(pandaArm2,mission);
 
@@ -200,6 +190,9 @@ for t = 0:deltat:end_time
 
     % this task should be the last one
     [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, coop_xdot, 0.0001, 0.01, 10); % tool position and orientation
+    [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
+    [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
+    [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);  % JL
     [Qp, ydotbar] = iCAT_task(eye(7),...
         eye(7),...
         Qp, ydotbar,...
@@ -208,7 +201,10 @@ for t = 0:deltat:end_time
     % Task: Right Arm Cooperation
 
     % this task should be the last one
-    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, coop_xdot, 0.0001, 0.01, 10); % tool position and orientation
+    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, -coop_xdot, 0.0001, 0.01, 10); % tool position and orientation
+    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, -pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
+    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
+    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);  % JL
     [Qp2, ydotbar2] = iCAT_task(eye(7),...
         eye(7),....
         Qp2, ydotbar2,...
