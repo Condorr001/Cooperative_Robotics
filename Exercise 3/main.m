@@ -156,9 +156,12 @@ for t = 0:deltat:end_time
     % add all the other tasks here!
     % the sequence of iCAT_task calls defines the priority
 
+    ydotbar_init = ydotbar;
+    ydotbar2_init = ydotbar2;
+
     % First Manipulator TPIK (left)
     % Task: Tool Move-To
-    [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
+    % [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
     [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
     [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);  % JL
     [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, pandaArm1.xdot.tool, 0.0001, 0.01, 10); % tool position and orientation
@@ -170,7 +173,7 @@ for t = 0:deltat:end_time
 
     % Second manipulator TPIK (right)
     % Task: Tool Move-To
-    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
+    % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
     [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
     [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);  % JL
     [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, pandaArm2.xdot.tool, 0.0001, 0.01, 10); % tool position and orientation
@@ -182,34 +185,78 @@ for t = 0:deltat:end_time
     
     %% COOPERATION hierarchy
     % SAVE THE NON COOPERATIVE VELOCITIES COMPUTED
-    non_coop_xdot_1 = pandaArm1.xdot.tool;
-    non_coop_xdot_2 = pandaArm2.xdot.tool;
+    % % % % % % non_coop_xdot_1 = pandaArm1.xdot.tool;
+    % % % % % % non_coop_xdot_2 = pandaArm2.xdot.tool;
+    % % % % % % 
+    % % % % % % % Task: Left Arm Cooperation
+    % % % % % % coop_xdot = (non_coop_xdot_1 + non_coop_xdot_2)/2;
+    % % % % % % 
+    % % % % % % % this task should be the last one
+    % % % % % % [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, coop_xdot, 0.0001, 0.01, 10); % tool position and orientation
+    % % % % % % [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
+    % % % % % % [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
+    % % % % % % [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);  % JL
+    % % % % % % [Qp, ydotbar] = iCAT_task(eye(7),...
+    % % % % % %     eye(7),...
+    % % % % % %     Qp, ydotbar,...
+    % % % % % %     zeros(7,1),...
+    % % % % % %     0.0001,   0.01, 10);    
+    % % % % % % % Task: Right Arm Cooperation
+    % % % % % % 
+    % % % % % % % this task should be the last one
+    % % % % % % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, -coop_xdot, 0.0001, 0.01, 10); % tool position and orientation
+    % % % % % % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, -pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
+    % % % % % % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
+    % % % % % % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);  % JL
+    % % % % % % [Qp2, ydotbar2] = iCAT_task(eye(7),...
+    % % % % % %     eye(7),....
+    % % % % % %     Qp2, ydotbar2,...
+    % % % % % %     zeros(7,1),...
+    % % % % % %     0.0001,   0.01, 10);    
 
-    % Task: Left Arm Cooperation
-    coop_xdot = (non_coop_xdot_1 + non_coop_xdot_2)/2;
+    % SAVE THE NON COOPERATIVE VELOCITIES COMPUTED
+    non_coop_xdot1 = tool_jacobian_L * ydotbar;       % xdot = J * ydotbar 
+    non_coop_xdot2 = tool_jacobian_R * ydotbar2;
 
-    % this task should be the last one
-    [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, coop_xdot, 0.0001, 0.01, 10); % tool position and orientation
-    [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
-    [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
-    [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);  % JL
-    [Qp, ydotbar] = iCAT_task(eye(7),...
-        eye(7),...
-        Qp, ydotbar,...
-        zeros(7,1),...
-        0.0001,   0.01, 10);    
-    % Task: Right Arm Cooperation
+    if (mission.phase == 2)        
+        Qp = eye(7);
+        Qp2 = eye(7);
+    
+        % computing H1 and H2       
+        H1 = pandaArm1.wJo*pinv(pandaArm1.wJo);      % Hi = J * Jinv
+        H2 = pandaArm2.wJo*pinv(pandaArm2.wJo);    
+        C = [H1 -H2];    
+    
+        % computing weights       
+        mu_0 = 0.01;
+        mu_a = mu_0 + norm(pandaArm1.xdot.tool - non_coop_xdot1);  % desired velocity - non cooperative velocity        
+        mu_b = mu_0 + norm(pandaArm2.xdot.tool - non_coop_xdot2);
+    
+        % computing coop velocities      
+        coop_xdot1 = (1 / (mu_a + mu_b)) * (mu_a * non_coop_xdot1 + mu_b * non_coop_xdot2);
+        coop_xdot2 = coop_xdot1;
+    
+        % computing feasible cooperative velocities        
+        feasible_coop_xdot = [H1 zeros(6); zeros(6) H2] * (eye(12) - pinv(C)*C) * [coop_xdot1; coop_xdot2];
+    
+        % Task: Arm1 (Left Arm) Cooperation
+        [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar_init, feasible_coop_xdot(1:6), 0.0001, 0.01, 10);  % MM
+        [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
+        [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
+        [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);   % JL
+        % [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, pandaArm1.xdot.tool, 0.0001, 0.01, 10);   % T
+        [Qp, ydotbar] = iCAT_task(eye(7), eye(7), Qp, ydotbar, zeros(7,1), 0.0001,   0.01, 10);   % this task should be the last one
+    
+        % Task: Arm2 (Right Arm) Cooperation
+        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2_init, feasible_coop_xdot(7:12), 0.0001, 0.01, 10); % MM
+        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
+        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
+        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);   % JL
+        % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, pandaArm2.xdot.tool, 0.0001, 0.01, 10);   % T
+        [Qp2, ydotbar2] = iCAT_task(eye(7), eye(7), Qp2, ydotbar2, zeros(7,1), 0.0001,   0.01, 10);  % this task should be the last one  
+    
+    end 
 
-    % this task should be the last one
-    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, -coop_xdot, 0.0001, 0.01, 10); % tool position and orientation
-    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, -pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
-    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
-    [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);  % JL
-    [Qp2, ydotbar2] = iCAT_task(eye(7),...
-        eye(7),....
-        Qp2, ydotbar2,...
-        zeros(7,1),...
-        0.0001,   0.01, 10);    
     % get the two variables for integration
     pandaArm1.q_dot = ydotbar(1:7);
     pandaArm2.q_dot = ydotbar2(1:7);
