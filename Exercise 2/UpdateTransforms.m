@@ -17,15 +17,15 @@ pandaArm.ArmR.wTe = pandaArm.ArmR.wTb * pandaArm.ArmR.bTe;
 pandaArm.ArmL.wTt = pandaArm.ArmL.wTe * pandaArm.ArmL.eTt;
 pandaArm.ArmR.wTt = pandaArm.ArmR.wTe * pandaArm.ArmR.eTt;
 
-if(mission.phase == 1)
-    tRw_L = pandaArm.ArmL.wTt(1:3,1:3)';    % rotation
-    wrt_L = pandaArm.ArmL.wTt(1:3,4);      % position
-    pandaArm.ArmL.tTo = [tRw_L -tRw_L'*wrt_L; 0 0 0 1] * pandaArm.ArmL.wTo;
-
-    tRw_R = pandaArm.ArmR.wTt(1:3,1:3)';
-    wrt_R = pandaArm.ArmR.wTt(1:3,4);    
-    pandaArm.ArmR.tTo = [tRw_R -tRw_R*wrt_R; 0 0 0 1] * pandaArm.ArmR.wTo;
-end
+% if(mission.phase == 1)
+%     tRw_L = pandaArm.ArmL.wTt(1:3,1:3)';    % rotation
+%     wrt_L = pandaArm.ArmL.wTt(1:3,4);      % position
+%     pandaArm.ArmL.tTo = [tRw_L -tRw_L'*wrt_L; 0 0 0 1] * pandaArm.ArmL.wTo;
+% 
+%     tRw_R = pandaArm.ArmR.wTt(1:3,1:3)';
+%     wrt_R = pandaArm.ArmR.wTt(1:3,4);    
+%     pandaArm.ArmR.tTo = [tRw_R -tRw_R*wrt_R; 0 0 0 1] * pandaArm.ArmR.wTo;
+% end
 
 % <o> to <w> : ASSUME <t> = <g> during entire cooperation phase
 if (mission.phase == 2)
