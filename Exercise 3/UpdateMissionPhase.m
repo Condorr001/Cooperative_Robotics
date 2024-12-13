@@ -16,7 +16,10 @@ function [pandaArm, pandaArm2, mission] = UpdateMissionPhase(pandaArm, pandaArm2
                 
             case 2 % Cooperative Manipulation Start 
                 % computing the errors for the rigid move-to task
-                [ang, lin] = CartError(pandaArm.wTog, pandaArm.wTo); 
+                [ang, lin] = CartError(pandaArm.wTog, pandaArm.wTo);
+
+                fprintf('ang=%f\n', ang);
+                fprintf('lin=%f\n', lin);
 
                 % max error: 1 cm and 3deg
                 if(norm(ang) <= deg2rad(3) && norm(lin) <= 0.01)

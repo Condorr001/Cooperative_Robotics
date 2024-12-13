@@ -9,7 +9,7 @@ function [pandaArm, mission] = UpdateMissionPhase(pandaArm, mission)
                 % Left Arm
                 tRw_L = pandaArm.ArmL.wTt(1:3,1:3)';    % rotation
                 wrt_L = pandaArm.ArmL.wTt(1:3,4);      % position
-                pandaArm.ArmL.tTo = [tRw_L -tRw_L'*wrt_L; 0 0 0 1] * pandaArm.ArmL.wTo;
+                pandaArm.ArmL.tTo = [tRw_L -tRw_L*wrt_L; 0 0 0 1] * pandaArm.ArmL.wTo;
 
                 % Right arm
                 tRw_R = pandaArm.ArmR.wTt(1:3,1:3)';

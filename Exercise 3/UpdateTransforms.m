@@ -13,7 +13,7 @@ pandaArm.wTt = pandaArm.wTe * pandaArm.eTt;
 if(mission.phase == 1)
     tRw = pandaArm.wTt(1:3,1:3)';    % rotation
     wrt = pandaArm.wTt(1:3,4);      % position
-    pandaArm.tTo = [tRw -tRw'*wrt; 0 0 0 1] * pandaArm.wTo;
+    pandaArm.tTo = [tRw -tRw*wrt; 0 0 0 1] * pandaArm.wTo;
 end
 
 % <o> to <w> : ASSUME <t> = <g> during entire cooperation phase
