@@ -54,14 +54,14 @@ uvms.q = [-0.0031 0 0.0128 -1.2460 0.0137 0.0853-pi/2 0.0137]';
 uvms.p = [48.5 11.5 -33   0 0 0]'; 
 
 %% defines the goal position for the end-effector/tool position task
-uvms.goalPosition = [50   -12.5  -33]'; % too close to the sea floor
-% uvms.goalPosition = [10.5   37.5   -38]'; % far away from the sea floor
+% uvms.goalPosition = [50   -12.5  -33]'; % too close to the sea floor
+uvms.goalPosition = [10.5   37.5   -38]'; % far away from the sea floor
 uvms.wRg = rotation(0, pi, pi/2);
 uvms.wTg = [uvms.wRg uvms.goalPosition; 0 0 0 1];
 
 %% defines the goal position for the vehicle position task
-uvms.vehicleGoalPosition = [50   -12.5  -33]';
-% uvms.vehicleGoalPosition = [10.5   37.5   -38]'; % far away from the sea floor
+% uvms.vehicleGoalPosition = [50   -12.5  -33]';
+uvms.vehicleGoalPosition = [10.5   37.5   -38]'; % far away from the sea floor
 uvms.wRgv = rotation(0, 0, 0);
 uvms.wTgv = [uvms.wRgv uvms.vehicleGoalPosition; 0 0 0 1];
 
@@ -116,24 +116,24 @@ for t = 0:deltat:end_time
     %[Qp, ydotbar] = iCAT_task(uvms.A.t,    uvms.Jt,    Qp, ydotbar, uvms.xdot.t,  0.0001,   0.01, 10);
 
     if (mission.phase == 1)
+        disp('Phase 1');
         [Qp, ydotbar] = iCAT_task(uvms.A.ma,    uvms.Jma,    Qp,  ydotbar,  uvms.xdot.ma,   0.0001,   0.01, 10); % MA
         [Qp, ydotbar] = iCAT_task(uvms.A.ha,    uvms.Jha,    Qp,  ydotbar,  uvms.xdot.ha,   0.0001,   0.01, 10); % HA
         [Qp, ydotbar] = iCAT_task(uvms.A.vp,    uvms.Jvp,    Qp,  ydotbar,  uvms.xdot.vp,   0.0001,   0.01, 10); % VP
         [Qp, ydotbar] = iCAT_task(uvms.A.vo,    uvms.Jvo,    Qp,  ydotbar,  uvms.xdot.vo,   0.0001,   0.01, 10); % VO
 
     elseif (mission.phase == 2)
-        % disp('IM HEREEEEEEEEEEEEEE'); % debug, qui ci entra
         [Qp, ydotbar] = iCAT_task(uvms.A.lan,     uvms.Jlan,     Qp,  ydotbar,  uvms.xdot.lan,    0.0001,   0.01, 10); % LAN
         [Qp, ydotbar] = iCAT_task(uvms.A.ha,    uvms.Jha,    Qp,  ydotbar,  uvms.xdot.ha,   0.0001,   0.01, 10); % HA
         [Qp, ydotbar] = iCAT_task(uvms.A.vp,    uvms.Jvp,    Qp,  ydotbar,  uvms.xdot.vp,   0.0001,   0.01, 10); % VP
     end
 
 
-    % % [Qp, ydotbar] = iCAT_task(uvms.A.ma,    uvms.Jma,    Qp,  ydotbar,  uvms.xdot.ma,   0.0001,   0.01, 10); % MA
-    % % [Qp, ydotbar] = iCAT_task(uvms.A.ha,    uvms.Jha,    Qp,  ydotbar,  uvms.xdot.ha,   0.0001,   0.01, 10); % HA
-    % % [Qp, ydotbar] = iCAT_task(uvms.A.lan,     uvms.Jlan,     Qp,  ydotbar,  uvms.xdot.lan,    0.0001,   0.01, 10); % LAN
-    % % [Qp, ydotbar] = iCAT_task(uvms.A.vp,    uvms.Jvp,    Qp,  ydotbar,  uvms.xdot.vp,   0.0001,   0.01, 10); % VP
-    % % [Qp, ydotbar] = iCAT_task(uvms.A.vo,    uvms.Jvo,    Qp,  ydotbar,  uvms.xdot.vo,   0.0001,   0.01, 10); % VO
+    % [Qp, ydotbar] = iCAT_task(uvms.A.ma,    uvms.Jma,    Qp,  ydotbar,  uvms.xdot.ma,   0.0001,   0.01, 10); % MA
+    % [Qp, ydotbar] = iCAT_task(uvms.A.ha,    uvms.Jha,    Qp,  ydotbar,  uvms.xdot.ha,   0.0001,   0.01, 10); % HA
+    % [Qp, ydotbar] = iCAT_task(uvms.A.lan,     uvms.Jlan,     Qp,  ydotbar,  uvms.xdot.lan,    0.0001,   0.01, 10); % LAN
+    % [Qp, ydotbar] = iCAT_task(uvms.A.vp,    uvms.Jvp,    Qp,  ydotbar,  uvms.xdot.vp,   0.0001,   0.01, 10); % VP
+    % [Qp, ydotbar] = iCAT_task(uvms.A.vo,    uvms.Jvo,    Qp,  ydotbar,  uvms.xdot.vo,   0.0001,   0.01, 10); % VO
 
     % [Qp, ydotbar] = iCAT_task(uvms.A.t,     uvms.Jt,     Qp,  ydotbar,  uvms.xdot.t,    0.0001,   0.01, 10); % T
     

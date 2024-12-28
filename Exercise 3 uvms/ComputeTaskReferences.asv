@@ -15,9 +15,9 @@ uvms.xdot.t(4:6) = Saturate(uvms.xdot.t(4:6), gain);
 
 % vehicle orientation
 [v_rho, v_d] = CartError(uvms.vTw*uvms.wTgv , eye(4));
-uvms.xdot.vp = gain * (zeros(3,1) - v_d);
+uvms.xdot.vp = -gain * (zeros(3,1) - v_d);
 uvms.xdot.vp = Saturate(uvms.xdot.vp, 1);
-uvms.xdot.vo = gain * v_rho; 
+uvms.xdot.vo = -gain * v_rho; 
 
 % minimum altitude
 min_alt = 1;
