@@ -21,7 +21,7 @@ uvms.xdot.vo = gain * v_rho;
 
 % minimum altitude
 min_alt = 1;
-uvms.xdot.ma = 100 * (min_alt - uvms.altitude);
+uvms.xdot.ma = 5 * (min_alt - uvms.altitude);
 
 % landing
 uvms.xdot.lan = 1 * (0 - uvms.altitude);

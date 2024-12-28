@@ -14,11 +14,10 @@ function [uvms, mission] = UpdateMissionPhase(uvms, mission)
             end
 
         case 2
-            [ang, lin] = CartError(uvms.vTg, uvms.vTt); %CartError(uvms.wTgv, uvms.wTv)
+            [ang, lin] = CartError(uvms.wTgv-[0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, uvms.altitude; 0, 0, 0, 0], uvms.wTv);% CartError(uvms.vTg, uvms.vTt);
             disp(['Lin: ' num2str(norm(lin))]);
             % if (norm(ang) < 0.1 && norm(lin(1:2)) < 0.1)
-            %if (norm(lin) < 0.1)
-            if(uvms.altitude < 0.1)
+            if (norm(lin) < 0.1)
                 disp('Landed');
             else
                 % disp('Lin err:');

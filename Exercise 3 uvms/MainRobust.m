@@ -54,14 +54,14 @@ uvms.q = [-0.0031 0 0.0128 -1.2460 0.0137 0.0853-pi/2 0.0137]';
 uvms.p = [48.5 11.5 -33   0 0 0]'; 
 
 %% defines the goal position for the end-effector/tool position task
-% uvms.goalPosition = [50   -12.5  -33]'; % too close to the sea floor
-uvms.goalPosition = [10.5   37.5   -38]'; % far away from the sea floor
+uvms.goalPosition = [50   -12.5  -33]'; % too close to the sea floor
+% uvms.goalPosition = [10.5   37.5   -38]'; % far away from the sea floor
 uvms.wRg = rotation(0, pi, pi/2);
 uvms.wTg = [uvms.wRg uvms.goalPosition; 0 0 0 1];
 
 %% defines the goal position for the vehicle position task
-% uvms.vehicleGoalPosition = [50   -12.5  -33]';
-uvms.vehicleGoalPosition = [10.5   37.5   -38]'; % far away from the sea floor
+uvms.vehicleGoalPosition = [50   -12.5  -33]';
+% uvms.vehicleGoalPosition = [10.5   37.5   -38]'; % far away from the sea floor
 uvms.wRgv = rotation(0, 0, 0);
 uvms.wTgv = [uvms.wRgv uvms.vehicleGoalPosition; 0 0 0 1];
 

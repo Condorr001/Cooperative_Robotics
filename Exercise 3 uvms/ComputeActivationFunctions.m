@@ -28,10 +28,12 @@ uvms.A.vp = eye(3) * ActionTransition("VP", prev, current, mission.phase_time);
 uvms.A.vo = eye(3) * ActionTransition("VO", prev, current, mission.phase_time);
 
 %% vehicle minimum altitude
-uvms.A.ma = DecreasingBellShapedFunction(1, 2, 0, 1, uvms.altitude) * ActionTransition("MA", prev, current, mission.phase_time);
+delta_ma = 0.05;
+min_alt = 1;
+uvms.A.ma = DecreasingBellShapedFunction(min_alt, min_alt+delta_ma, 0, 1, uvms.altitude) .* ActionTransition("MA", prev, current, mission.phase_time);
 
 %% zero vehicle altitude (landing)
-uvms.A.lan = 1 * ActionTransition("LAN", prev, current, mission.phase_time);
+uvms.A.lan = ActionTransition("LAN", prev, current, mission.phase_time);
 
 %% horizontal attitude
 w_kw = [0 0 1]';
