@@ -75,7 +75,6 @@ mission.phase = 1;
 mission.phase_time = 0;
 
 % Define the active tasks for each phase of the mission
-%
 % 1- MA  = Minimum Altitude Task
 % 2- HA  = Horizontal Attitude Task
 % 3- VP  = Vehicle Position Control Task
@@ -122,9 +121,6 @@ for t = 0:deltat:end_time
     
     ydotbar = zeros(13,1);
     Qp = eye(13); 
-    % add all the other tasks here!
-    % the sequence of iCAT_task calls defines the priority
-    %[Qp, ydotbar] = iCAT_task(uvms.A.t,    uvms.Jt,    Qp, ydotbar, uvms.xdot.t,  0.0001,   0.01, 10);
 
     if (mission.phase == 1)
         disp('Phase 1');
@@ -145,15 +141,6 @@ for t = 0:deltat:end_time
         [Qp, ydotbar] = iCAT_task(uvms.A.zvc,    uvms.Jzvc,    Qp,  ydotbar,  uvms.xdot.zvc,   0.0001,   0.01, 10); % ZVC
         [Qp, ydotbar] = iCAT_task(uvms.A.g,    uvms.Jt,    Qp,  ydotbar,  uvms.xdot.g,   0.0001,   0.01, 10); % G
     end
-
-
-    % [Qp, ydotbar] = iCAT_task(uvms.A.ma,    uvms.Jma,    Qp,  ydotbar,  uvms.xdot.ma,   0.0001,   0.01, 10); % MA
-    % [Qp, ydotbar] = iCAT_task(uvms.A.ha,    uvms.Jha,    Qp,  ydotbar,  uvms.xdot.ha,   0.0001,   0.01, 10); % HA
-    % [Qp, ydotbar] = iCAT_task(uvms.A.lan,     uvms.Jlan,     Qp,  ydotbar,  uvms.xdot.lan,    0.0001,   0.01, 10); % LAN
-    % [Qp, ydotbar] = iCAT_task(uvms.A.vp,    uvms.Jvp,    Qp,  ydotbar,  uvms.xdot.vp,   0.0001,   0.01, 10); % VP
-    % [Qp, ydotbar] = iCAT_task(uvms.A.vo,    uvms.Jvo,    Qp,  ydotbar,  uvms.xdot.vo,   0.0001,   0.01, 10); % VO
-
-    % [Qp, ydotbar] = iCAT_task(uvms.A.t,     uvms.Jt,     Qp,  ydotbar,  uvms.xdot.t,    0.0001,   0.01, 10); % T
     
     [Qp, ydotbar] = iCAT_task(eye(13),     eye(13),    Qp, ydotbar, zeros(13,1),  0.0001,   0.01, 10);    % this task should be the last one
     
@@ -189,12 +176,6 @@ for t = 0:deltat:end_time
     % enable this to have the simulation approximately evolving like real
     % time. Remove to go as fast as possible
     SlowdownToRealtime(deltat);
-    % if(uvms.flag)
-    %     fclose(uVehicle);
-    %     fclose(uArm);
-    %     PrintPlot(plt);
-    %     return;
-    % end
 end
 
 fclose(uVehicle);
