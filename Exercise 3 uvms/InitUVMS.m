@@ -67,5 +67,19 @@ uvms.A.v_lin = zeros(3);
 uvms.A.ma = 0;
 uvms.A.lan = 0;
 
+uvms.theta = 0;
+uvms.rock_center = zeros(3,1);
+uvms.xdot.hal = [];
+uvms.A.hal = zeros(1,1);
+uvms.Jhal = [];
+uvms.w_rho_hal = zeros(3,1);
+
+uvms.xdot.zvc = [];
+uvms.A.zvc = zeros(6,6);
+uvms.Jzvc = [];
+
+uvms.xdot.g = [];
+uvms.A.g = zeros(6,6);
+
 end
 

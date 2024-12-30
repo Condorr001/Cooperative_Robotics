@@ -59,5 +59,18 @@ else
     uvms.Jha = [zeros(1,13)];
 end
 
+% Vehicle alignment to the target task
+w_xv = uvms.wTv(1:3, 1:3) * [1 0 0]';
+w_xv_perpendicular = (eye(3, 3) - w_kw * w_kw') * w_xv;
+w_misalignment = ( eye(3, 3) - w_kw * w_kw' ) * ( uvms.rock_center - uvms.p(1:3) );
+w_mis_norm = w_misalignment / norm( w_misalignment );
+uvms.w_rho_hal = ReducedVersorLemma( w_mis_norm, w_xv_perpendicular);
+w_v_align = ( skew(w_mis_norm)*w_xv_perpendicular ) / sin(norm(uvms.w_rho_hal));
+uvms.Jhal = [ zeros(1, 7), zeros(1, 3), w_v_align'*uvms.wTv(1:3, 1:3) ];
 
+% Zero Velocity Constraint
+uvms.Jzvc = [ zeros(6, 7), [uvms.wTv(1:3, 1:3); zeros(3)], [zeros(3); uvms.wTv(1:3, 1:3)]];
+
+% JL
+uvms.Jjl = eye(7);
 end
