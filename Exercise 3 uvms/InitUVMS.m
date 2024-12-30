@@ -81,5 +81,6 @@ uvms.Jzvc = [];
 uvms.xdot.g = [];
 uvms.A.g = zeros(6,6);
 
+uvms.flag = 0;
 end
 

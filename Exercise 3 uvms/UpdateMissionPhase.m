@@ -42,6 +42,7 @@ function [uvms, mission] = UpdateMissionPhase(uvms, mission)
             [ang, lin] = CartError(matrix_rock, uvms.wTv*uvms.vTt);
             if(norm(lin) < 0.1)
                 disp('DONE');
+                uvms.flag = 1;
             else
                 disp("Lin err: ")
                 disp(norm(lin));

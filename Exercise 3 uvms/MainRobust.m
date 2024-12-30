@@ -6,7 +6,7 @@ close all
 
 % Simulation variables (integration and final time)
 deltat = 0.005;
-end_time = 100;
+end_time = 22;
 loop = 1;
 maxloops = ceil(end_time/deltat);
 
@@ -82,9 +82,8 @@ mission.phase_time = 0;
 % 4- VO  = Vehicle Orientation Control Task
 % 5- LAN = Zero Altitude Control Task (Landing Action)
 % 6- HAL = Horizontal Alignment
-% 7- JL  = Joint Limits (Arm)
-% 8- G   = Grasping (Arm)
-% 9- ZVC = Zero velocity Constraint (Vehicle)
+% 7- G   = Grasping (Arm)
+% 8- ZVC = Zero velocity Constraint (Vehicle)
 
 mission.actions.safe_nav = ["MA", "HA", "VP", "VO"];
 mission.actions.aligning = ["MA", "HAL", "VP", "VO"];
@@ -190,11 +189,17 @@ for t = 0:deltat:end_time
     % enable this to have the simulation approximately evolving like real
     % time. Remove to go as fast as possible
     SlowdownToRealtime(deltat);
+    % if(uvms.flag)
+    %     fclose(uVehicle);
+    %     fclose(uArm);
+    %     PrintPlot(plt);
+    %     return;
+    % end
 end
 
 fclose(uVehicle);
 fclose(uArm);
 
-%PrintPlot(plt);
+PrintPlot(plt);
 
 end
