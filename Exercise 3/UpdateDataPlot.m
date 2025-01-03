@@ -50,4 +50,10 @@ plt.arm2.a_ma(:, loop) = pandaArm2.A.ma;
 % activation tool 
 plt.arm2.a_tool(:, loop) = diag(pandaArm2.A.tool(1:6,1:6));
 
+
+% cooperative and non cooperative velocities
+plt.feasible_coop_xdot(:,loop) = pandaArm1.feasible_coop_xdot;
+plt.arm1.non_coop_xdot(:,loop) = pandaArm1.non_coop_xdot;
+plt.arm2.non_coop_xdot(:,loop) = pandaArm2.non_coop_xdot;
+
 end

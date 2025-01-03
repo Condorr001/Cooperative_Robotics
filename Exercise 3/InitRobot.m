@@ -33,5 +33,11 @@ pandaArm.xdot.rc = zeros(6,1);
 pandaArm.A.tool = zeros(6);
 pandaArm.A.jl = zeros(6);
 pandaArm.A.rc = zeros(6);
+
+
+
+% plot variables
+pandaArm.feasible_coop_xdot = zeros(12,1);
+pandaArm.non_coop_xdot = zeros(6,1);
 end
 

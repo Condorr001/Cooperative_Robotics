@@ -64,7 +64,7 @@ xlabel("Time [s]");
 ylabel("Velocities [rad/s]");
 %fontsize(gca,22,"points");
 title("Left Arm End-Effector Desired vs Actual Angular Velocities");
-lgd = legend("w_x_des","w_y_des","w_z_des","w_x_ee","w_y_ee","w_z_ee");
+lgd = legend("w_x_{des}","w_y_{des}","w_z_{des}","w_x_{ee}","w_y_{ee}","w_z_{ee}");
 %fontsize(lgd,22,"points");
 
 % Right arm
@@ -77,7 +77,7 @@ xlabel("Time [s]");
 ylabel("Velocities [rad/s]");
 %fontsize(gca,22,"points");
 title("Right Arm End-Effector Desired vs Actual Angular Velocities");
-lgd = legend("w_x_des","w_y_des","w_z_des","w_x_ee","w_y_ee","w_z_ee");
+lgd = legend("w_x_{des}","w_y_{des}","w_z_{des}","w_x_{ee}","w_y_{ee}","w_z_{ee}");
 %fontsize(lgd,22,"points");
 
 %% Desired vs end-effector linear velocities
@@ -91,7 +91,7 @@ xlabel("Time [s]");
 ylabel("Velocities [m/s]");
 %fontsize(gca,22,"points");
 title("Left Arm End-Effector Desired vs Actual Linear Velocities");
-lgd = legend("v_x_des","v_y_des","v_z_des","v_x_ee","v_y_ee","v_z_ee");
+lgd = legend("v_x_{des}","v_y_{des}","v_z_{des}","v_x_{ee}","v_y_{ee}","v_z_{ee}");
 %fontsize(lgd,22,"points");
 
 % Right arm
@@ -104,8 +104,138 @@ xlabel("Time [s]");
 ylabel("Velocities [m/s]");
 %fontsize(gca,22,"points");
 title("Right Arm End-Effector Desired vs Actual Linear Velocities");
-lgd = legend("v_x_des","v_y_des","v_z_des","v_x_ee","v_y_ee","v_z_ee");
+lgd = legend("v_x_{des}","v_y_{des}","v_z_{des}","v_x_{ee}","v_y_{ee}","v_z_{ee}");
 %fontsize(lgd,22,"points");
+
+%% desired object linear velocity vs non cooperative cartesian velocities
+% fig = figure("Name", "Desired object linear velocity vs non cooperative cartesian velocities");
+% plot(plt.t(1:end), plt.arm1.non_coop_xdot(1:3, :),"LineWidth", 2);
+% hold on;
+% plot(plt.t(1:end), plt.arm2.non_coop_xdot(1:3, :) ,"LineWidth", 2);
+% hold on;
+% plot(plt.t(1:end), plt.feasible_coop_xdot(1:3, :) ,"LineWidth", 2);
+% hold on;
+% plot(plt.t(1:end), plt.feasible_coop_xdot(7:9, :) ,"LineWidth", 2);
+% grid on;
+% xlabel("Time [s]");
+% ylabel("Velocities [m/s]");
+% %fontsize(gca,22,"points");
+% title("Desired object linear velocity vs non cooperative cartesian velocities");
+% lgd = legend("v1_x_{noncoop}","v1_y_{noncoop}","v1_z_{noncoop}",...
+%              "v2_x_{noncoop}","v2_y_{noncoop}","v2_z_{noncoop}",...
+%              "v1_x_{coop}","v1_y_{coop}","v1_z_{coop}",...
+%              "v2_x_{coop}","v2_y_{coop}","v2_z_{coop}");
+% % fontsize(lgd,22,"points");
+% 
+% % desired object angular velocity vs non cooperative cartesian velocities
+% fig = figure("Name", "Desired object angular velocity vs non cooperative cartesian velocities");
+% plot(plt.t(1:end), plt.arm1.non_coop_xdot(4:6, :),"LineWidth", 2);
+% hold on;
+% plot(plt.t(1:end), plt.arm2.non_coop_xdot(4:6, :) ,"LineWidth", 2);
+% hold on;
+% plot(plt.t(1:end), plt.feasible_coop_xdot(4:6, :) ,"LineWidth", 2);
+% hold on;
+% plot(plt.t(1:end), plt.feasible_coop_xdot(10:12, :) ,"LineWidth", 2);
+% grid on;
+% xlabel("Time [s]");
+% ylabel("Velocities [m/s]");
+% %fontsize(gca,22,"points");
+% title("Desired object linear velocity vs non cooperative cartesian velocities");
+% lgd = legend("w1_x_{noncoop}","w1_y_{noncoop}","w1_z_{noncoop}",...
+%              "w2_x_{noncoop}","w2_y_{noncoop}","w2_z_{noncoop}",...
+%              "w1_x_{coop}","w1_y_{coop}","w1_z_{coop}",...
+%              "w2_x_{coop}","w2_y_{coop}","2_z_{coop}");
+% % fontsize(lgd,22,"points");
+% 
+
+fig = figure("Name", "Component-wise velocity comparison");
+
+% X components
+subplot(3,1,1);
+plot(plt.t(1:end), plt.arm1.non_coop_xdot(1, :), 'LineWidth', 2);
+hold on;
+plot(plt.t(1:end), plt.arm2.non_coop_xdot(1, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(1, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(7, :), 'LineWidth', 2);
+grid on;
+xlabel("Time [s]");
+ylabel("X Velocity [m/s]");
+title("X-Component Velocities");
+legend("v1_x_{noncoop}", "v2_x_{noncoop}", "v1_x_{coop}", "v2_x_{coop}");
+
+% Y components
+subplot(3,1,2);
+plot(plt.t(1:end), plt.arm1.non_coop_xdot(2, :), 'LineWidth', 2);
+hold on;
+plot(plt.t(1:end), plt.arm2.non_coop_xdot(2, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(2, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(8, :), 'LineWidth', 2);
+grid on;
+xlabel("Time [s]");
+ylabel("Y Velocity [m/s]");
+title("Y-Component Velocities");
+legend("v1_y_{noncoop}", "v2_y_{noncoop}", "v1_y_{coop}", "v2_y_{coop}");
+
+% Z components
+subplot(3,1,3);
+plot(plt.t(1:end), plt.arm1.non_coop_xdot(3, :), 'LineWidth', 2);
+hold on;
+plot(plt.t(1:end), plt.arm2.non_coop_xdot(3, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(3, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(9, :), 'LineWidth', 2);
+grid on;
+xlabel("Time [s]");
+ylabel("Z Velocity [m/s]");
+title("Z-Component Velocities");
+legend("v1_z_{noncoop}", "v2_z_{noncoop}", "v1_z_{coop}", "v2_z_{coop}");
+
+% Adjust figure layout for better readability
+sgtitle("Comparison of Non-Cooperative and Cooperative Linear Velocities");
+
+% 
+fig = figure("Name", "Component-wise angular velocity comparison");
+
+% X components
+subplot(3,1,1);
+plot(plt.t(1:end), plt.arm1.non_coop_xdot(4, :), 'LineWidth', 2);
+hold on;
+plot(plt.t(1:end), plt.arm2.non_coop_xdot(4, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(4, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(10, :), 'LineWidth', 2);
+grid on;
+xlabel("Time [s]");
+ylabel("X Angular Vel. [rad/s]");
+title("X-Component Angular Velocities");
+legend("w1_x_{noncoop}", "w2_x_{noncoop}", "w1_x_{coop}", "w2_x_{coop}");
+
+% Y components
+subplot(3,1,2);
+plot(plt.t(1:end), plt.arm1.non_coop_xdot(5, :), 'LineWidth', 2);
+hold on;
+plot(plt.t(1:end), plt.arm2.non_coop_xdot(5, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(5, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(11, :), 'LineWidth', 2);
+grid on;
+xlabel("Time [s]");
+ylabel("Y Angular Vel. [rad/s]");
+title("Y-Component Angular Velocities");
+legend("w1_y_{noncoop}", "w2_y_{noncoop}", "w1_y_{coop}", "w2_y_{coop}");
+
+% Z components
+subplot(3,1,3);
+plot(plt.t(1:end), plt.arm1.non_coop_xdot(6, :), 'LineWidth', 2);
+hold on;
+plot(plt.t(1:end), plt.arm2.non_coop_xdot(6, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(6, :), 'LineWidth', 2);
+plot(plt.t(1:end), plt.feasible_coop_xdot(12, :), 'LineWidth', 2);
+grid on;
+xlabel("Time [s]");
+ylabel("Z Angular Vel. [rad/s]");
+title("Z-Component Angular Velocities");
+legend("w1_z_{noncoop}", "w2_z_{noncoop}", "w1_z_{coop}", "w2_z_{coop}");
+
+% Adjust figure layout for better readability
+sgtitle("Comparison of Non-Cooperative and Cooperative Angular Velocities");
 
 
 end

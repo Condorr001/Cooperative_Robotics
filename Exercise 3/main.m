@@ -23,7 +23,7 @@ if real_robot == true
     hudpsRight.RemoteIPAddress = '127.0.0.1';
 else
     hudps = dsp.UDPSender('RemoteIPPort',1500);
-    hudps.RemoteIPAddress = '130.251.36.137';
+    hudps.RemoteIPAddress = '192.168.1.102';
 end
 %% TO HERE
 
@@ -38,7 +38,7 @@ plt = InitDataPlot(maxloops);
 
 % Init object frame
 obj_length = 0.06;
-w_obj_pos = [0.5 0 0.3]';
+w_obj_pos = [0.5 0 0.59]';
 
 pandaArm1.wTo = eye(4);
 pandaArm1.wTo(1:3, 4) = w_obj_pos;
@@ -215,6 +215,7 @@ for t = 0:deltat:end_time
     non_coop_xdot1 = tool_jacobian_L * ydotbar;       % xdot = J * ydotbar 
     non_coop_xdot2 = tool_jacobian_R * ydotbar2;
 
+
     if (mission.phase == 2)        
         Qp = eye(7);
         Qp2 = eye(7);
@@ -236,6 +237,11 @@ for t = 0:deltat:end_time
         % computing feasible cooperative velocities        
         feasible_coop_xdot = [H1 zeros(6); zeros(6) H2] * (eye(12) - pinv(C)*C) * [coop_xdot1; coop_xdot2];
     
+        % plot variables
+        pandaArm1.feasible_coop_xdot = feasible_coop_xdot;
+        pandaArm2.feasible_coop_xdot = pandaArm1.feasible_coop_xdot;
+
+
         % Task: Arm1 (Left Arm) Cooperation
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, feasible_coop_xdot(1:6), 0.0001, 0.01, 10);  % CV
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
@@ -254,6 +260,11 @@ for t = 0:deltat:end_time
     
     end 
 
+    % plot variables
+    pandaArm1.non_coop_xdot = non_coop_xdot1;
+    pandaArm2.non_coop_xdot = non_coop_xdot2;
+
+    
     % get the two variables for integration
     pandaArm1.q_dot = ydotbar(1:7);
     pandaArm2.q_dot = ydotbar2(1:7);
@@ -284,9 +295,11 @@ for t = 0:deltat:end_time
 
     % Compute distance between tools for plotting
     pandaArm1.dist_tools = norm(pandaArm1.wTt(1:3, 4) - pandaArm2.wTt(1:3, 4));
+    % disp('dist_tools = ');
+    % disp(pandaArm1.dist_tools);
 
     % Update data for plots
-    % plt = UpdateDataPlot(plt,pandaArm1,pandaArm2,t,loop, mission);
+    plt = UpdateDataPlot(plt,pandaArm1,pandaArm2,t,loop, mission);
 
     loop = loop + 1;
     % add debug prints here
@@ -301,4 +314,4 @@ for t = 0:deltat:end_time
     SlowdownToRealtime(deltat);
     
 end
-% PrintPlot(plt);
+PrintPlot(plt);
