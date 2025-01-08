@@ -77,15 +77,29 @@ xlabel('Time (s)','FontSize', 12, 'FontName', 'Arial');
 ylabel('Activated Function', 'FontSize', 12, 'FontName', 'Arial');
     
 
-% figure(3);
-% hplot = plot(plt.t, plt.a(1:7,:));
-% set(hplot, 'LineWidth', 2);
-% legend('Ajl_11','Ajl_22','Ajl_33','Ajl_44','Ajl_55','Ajl_66','Ajl_77');
-% 
-% figure(4);
-% hplot = plot(plt.t, plt.a(8:9,:));
-% set(hplot, 'LineWidth', 2);
-% legend('Amu', 'Aha');
+% Misalignment error
+figure(4); grid on;
+hplot = plot(plt.t, plt.misal_err);
+title( "Misalignment error","FontSize",14,"FontName",'Arial');
+set(hplot, 'LineWidth', 2);
+xlabel('Time (s)','FontSize', 12, 'FontName', 'Arial'); 
+ylabel('Error (rad)', 'FontSize', 12, 'FontName', 'Arial');
+
+% Altitude error
+figure(5); grid on;
+hplot = plot(plt.t, plt.alt_err);
+title( "Altitude error","FontSize",14,"FontName",'Arial');
+set(hplot, 'LineWidth', 2);
+xlabel('Time (s)','FontSize', 12, 'FontName', 'Arial'); 
+ylabel('Error (m)', 'FontSize', 12, 'FontName', 'Arial');
+
+% Grasping error
+figure(6); grid on;
+hplot = plot(plt.t, plt.grasping_err);
+title( "Distance between tool and goal","FontSize",14,"FontName",'Arial');
+set(hplot, 'LineWidth', 2);
+xlabel('Time (s)','FontSize', 12, 'FontName', 'Arial'); 
+ylabel('Distance (m)', 'FontSize', 12, 'FontName', 'Arial');
 
 end
 

@@ -2,16 +2,15 @@ function [uvms] = ComputeTaskReferences(uvms, mission)
 % compute the task references here
 
 % reference for tool-frame position control task
-gain = 1;
+gain = 1; % unique gain for all tasks, expect minimum altitude and 
+          % horizontal alignment
+
+% tool
 [ang, lin] = CartError(uvms.vTg , uvms.vTt);
 uvms.xdot.t = gain * [ang; lin];
-% limit the requested velocities...
+% limit the requested velocities (safety)
 uvms.xdot.t(1:3) = Saturate(uvms.xdot.t(1:3), gain);
 uvms.xdot.t(4:6) = Saturate(uvms.xdot.t(4:6), gain);
-
-% w_vehicle_target_distance = uvms.wTgv(1:3,4) - uvms.wTv(1:3,4);
-% uvms.xdot.vp = -0.6 * w_vehicle_target_distance;
-% uvms.xdot.vp = Saturate(uvms.xdot.vp, 0.8);
 
 % vehicle orientation
 [v_rho, v_d] = CartError(uvms.vTw*uvms.wTgv , eye(4));
@@ -37,10 +36,7 @@ uvms.xdot.ha = gain * (0.1 - norm(rho_ha));
 
 
 % horizontal alignment
-uvms.xdot.hal = gain * (0.0 - norm(uvms.w_rho_hal));
-
-% joint limits
-% uvms.xdot.jl = gain * (((uvms.jlmax + uvms.jlmin) / 2) - uvms.q);
+uvms.xdot.hal = 1.0 * (0.0 - norm(uvms.w_rho_hal));
 
 % zero velocity constraint
 uvms.xdot.zvc = gain * (zeros(6,1) - uvms.p_dot);

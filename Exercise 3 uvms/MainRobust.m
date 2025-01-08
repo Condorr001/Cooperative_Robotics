@@ -51,7 +51,6 @@ uvms.q = [-0.0031 0 0.0128 -1.2460 0.0137 0.0853-pi/2 0.0137]';
 % RPY angles are applied in the following sequence
 % R(rot_x, rot_y, rot_z) = Rz (rot_z) * Ry(rot_y) * Rx(rot_x)
 uvms.p = [8.5 38.5 -36 0 -0.06 0.5]'; 
-% % % % uvms.p = [48.5 11.5 -33   0 0 0]'; 
 
 %% defines the goal position for the end-effector/tool position task
 % uvms.goalPosition = [50   -12.5  -33]'; % too close to the sea floor
@@ -137,7 +136,6 @@ for t = 0:deltat:end_time
         [Qp, ydotbar] = iCAT_task(uvms.A.ha,    uvms.Jha,    Qp,  ydotbar,  uvms.xdot.ha,   0.0001,   0.01, 10); % HA
         [Qp, ydotbar] = iCAT_task(uvms.A.vp,    uvms.Jvp,    Qp,  ydotbar,  uvms.xdot.vp,   0.0001,   0.01, 10); % VP
     elseif (mission.phase == 4)
-        % [Qp, ydotbar] = iCAT_task(uvms.A.jl,    uvms.Jjl,    Qp,  ydotbar,  uvms.xdot.jl,   0.0001,   0.01, 10); % JL
         [Qp, ydotbar] = iCAT_task(uvms.A.zvc,    uvms.Jzvc,    Qp,  ydotbar,  uvms.xdot.zvc,   0.0001,   0.01, 10); % ZVC
         [Qp, ydotbar] = iCAT_task(uvms.A.g,    uvms.Jt,    Qp,  ydotbar,  uvms.xdot.g,   0.0001,   0.01, 10); % G
     end

@@ -40,8 +40,6 @@ uvms.Jt = [uvms.Jt_a uvms.Jt_v];
 % vehicle position Jacobian projected on <w>
 uvms.Jvp = [zeros(3,7) -uvms.wTv(1:3,1:3) zeros(3)]; % 3x13, zeros for the arm as we're not controlling it here, 3 because we're only controlling the position of the vehicle (not orientation)
 uvms.Jvo = [zeros(3,7) zeros(3) uvms.wTv(1:3,1:3)];
-% uvms.Jvp = [zeros(3,7) -eye(3) zeros(3)];
-% uvms.Jvo = [zeros(3,7), zeros(3) eye(3)];
 
 % vehicle minimum altitude and lan Jacobians
 w_kw = [0 0 1]';

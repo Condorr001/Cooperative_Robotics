@@ -82,5 +82,6 @@ uvms.xdot.g = [];
 uvms.A.g = zeros(6,6);
 
 uvms.flag = 0;
+uvms.landingflag = 0;
 end
 

@@ -15,16 +15,6 @@ elseif(mission.current_action == "grasping")
     current = mission.actions.grasping;
 end
 
-% switch mission.phase
-%     case 1  % safe navigation
-%         prev = mission.actions.safe_nav;
-%         current = prev;
-% 
-%     case 2 % landing
-%         prev = mission.actions.safe_nav;
-%         current = mission.actions.landing;    
-% end
-
 %% arm tool position control
 % always active
 uvms.A.t = eye(6);
@@ -49,34 +39,6 @@ rho_ha = ReducedVersorLemma(v_kw,  v_kv);
 uvms.A.ha = IncreasingBellShapedFunction(0.1, 0.2, 0, 1, norm(rho_ha)) * ActionTransition("HA", prev, current, mission.phase_time);
 %% vehicle alignment
 uvms.A.hal = IncreasingBellShapedFunction(0.001, 0.05, 0, 1, norm(uvms.w_rho_hal)) * ActionTransition("HAL", prev, current, mission.phase_time);
-%% joint limits
-% n = size(uvms.q,1);
-% margin = 0.9; % max - max error, so 1 - 0.1
-% 
-% % for each joint in the arm
-% for i = 1:n
-%     % check the sign of jlmin to know which are the lower and higher value
-%     % to put in the bell function, considering the margin
-%     if (uvms.jlmin(i) < 0)
-%         minBell = DecreasingBellShapedFunction(uvms.jlmin(i), uvms.jlmin(i)*margin, 0, 1, uvms.q(i));
-%     else
-%         minBell = DecreasingBellShapedFunction(uvms.jlmin(i)*margin, uvms.jlmin(i), 0, 1, uvms.q(i));
-%     end
-% 
-%     % same for jlmax, in this case with an increasing bell function
-%     if (uvms.jlmax(i) < 0)
-%         maxBell = IncreasingBellShapedFunction(uvms.jlmax(i), uvms.jlmax(i)*margin, 0, 1, uvms.q(i));
-%     else
-%         maxBell = IncreasingBellShapedFunction(uvms.jlmax(i)*margin, uvms.jlmax(i), 0, 1, uvms.q(i));
-%     end
-% 
-%     % sum the two bells to have a behaviour which respects both minimum and
-%     % maximum limits of each joint
-%     uvms.A.jl(i,i) = minBell + maxBell;
-% 
-% end
-% 
-% uvms.A.jl = uvms.A.jl .* ActionTransition("JL", prev, current, mission.phase_time);
 
 %% zero velocity constraints
 uvms.A.zvc = eye(6) * ActionTransition("ZVC", prev, current, mission.phase_time);

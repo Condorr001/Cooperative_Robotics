@@ -35,5 +35,14 @@ function [plt] = InitDataPlot( maxloops)
     plt.vpos_dot_des = zeros(3, maxloops);
     plt.vorient_dot_des = zeros(3, maxloops);
 
+    % Misalignment error
+    plt.misal_err = zeros(1, maxloops);
+
+    % Altitude error
+    plt.alt_err = zeros(1, maxloops);
+
+    % Grasping error
+    plt.grasping_err = zeros(1, maxloops);
+
 end
 

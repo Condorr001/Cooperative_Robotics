@@ -29,10 +29,6 @@ plt.A.lan(:,loop) = uvms.A.lan;
 
 plt.xdot_des(:, loop) =  blkdiag(uvms.wTv(1:3,1:3), uvms.wTv(1:3,1:3))*uvms.xdot.t;
 
-% plt.a(1:7, loop) = diag(uvms.A.jl);
-% plt.a(8, loop) = uvms.A.mu;
-% plt.a(9, loop) = uvms.A.ha(1,1);
-
 % Vehicle Position and Orientation
 plt.vpos(:,loop) = uvms.p(1:3);
 plt.vorient(:,loop) = uvms.p(4:6);
@@ -45,6 +41,17 @@ plt.vorient_dot(:,loop) = uvms.p_dot(4:6);
 plt.vpos_dot_des(:,loop) = uvms.xdot.vp;
 plt.vorient_dot_des(:,loop) = uvms.xdot.vo;
 
-% plt.toolx(:,loop) = uvms.wTt(1,4);
-% plt.tooly(:,loop) = uvms.wTt(2,4);
+% Misalignment error
+plt.misal_err(:, loop) = norm(uvms.theta);
+
+% Altitude error
+plt.alt_err(:, loop) = norm(uvms.altitude);
+
+% Grasping error
+if uvms.landingflag == 1
+    matrix_rock = [eye(3) uvms.rock_center; 0 0 0 1];
+    [ang, lin] = CartError(matrix_rock, uvms.wTv*uvms.vTt);
+    plt.grasping_err(:, loop) = norm(lin);
+end
+
 end
