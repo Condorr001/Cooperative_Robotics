@@ -50,4 +50,6 @@ plt.armR.a_ma(:, loop) = pandaArm.A.ArmR.ma;
 % activation tool 
 plt.armR.a_tool(:, loop) = diag(pandaArm.A.tool(7:12,7:12));
 
+plt.armR.dist_tools(:,loop) = pandaArm.ArmR.dist_tools;
+
 end

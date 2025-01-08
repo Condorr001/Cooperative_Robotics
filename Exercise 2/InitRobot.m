@@ -7,6 +7,7 @@ pandaArm.ArmL = model;
 pandaArm.ArmR = model;
 % Init robot basic informations (q_init, transformation matrices ...)
 pandaArm.ArmL.q = [0.0167305,-0.762614,-0.0207622,-2.34352,-0.0305686,1.53975,0.753872]';%check rigid body tree DOCUMENTATION
+
 pandaArm.ArmR.q = pandaArm.ArmL.q;
 pandaArm.ArmL.q_dot = [0 0 0 0 0 0 0]';
 pandaArm.ArmR.q_dot = [0 0 0 0 0 0 0]';
@@ -49,6 +50,8 @@ pandaArm.xdot.rc = zeros(6,1);
 pandaArm.A.tool = zeros(12);
 pandaArm.A.jl = zeros(12);
 pandaArm.A.rc = zeros(6);
+
+pandaArm.ArmR.dist_tools = 0;
 
 end
 

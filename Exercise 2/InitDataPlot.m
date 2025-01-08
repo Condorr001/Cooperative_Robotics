@@ -38,5 +38,6 @@ function [plt] = InitDataPlot( maxloops)
     % mission phase
     plt.phase = zeros(1, maxloops);
 
+    plt.armR.dist_tools = 100000;
 end
 

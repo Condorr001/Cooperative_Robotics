@@ -7,7 +7,7 @@ real_robot = false;
 %% Initialization - DON'T CHANGE ANYTHING from HERE ... 
 % Simulation variables (integration and final time)
 dt = 0.005;
-end_time = 15;
+end_time = 60;
 loop = 1;
 maxloops = ceil(end_time/dt);
 mission.phase = 1;
@@ -24,7 +24,7 @@ if real_robot == true
     hudpsRight.RemoteIPAddress = '127.0.0.1';
 else
     hudps = dsp.UDPSender('RemoteIPPort',1500);
-    hudps.RemoteIPAddress = '130.251.36.137';
+    hudps.RemoteIPAddress = '192.168.1.102';
 end
 %% ... to HERE.
 % Init robot model
@@ -40,6 +40,7 @@ pandaArms = InitRobot(model,wTb_left,wTb_right);
 % Init object and tools frames
 obj_length = 0.12;
 w_obj_pos = [0.5 0 0.59]';
+% [w_obj_pos] = [0.5, 0, 0.01]';
 % ArmL = arm left -> wTo = position of the object w.r.t. the world
 % Define transformation matrix from object to world.
 pandaArms.ArmL.wTo = eye(4);
@@ -76,6 +77,7 @@ pandaArms.ArmR.wTg = [pandaArms.ArmR.wTt(1:3,1:3) * tRg, grasping_right; 0 0 0 1
 
 % Second goal move the object
 w_g_pos = [0.65 -0.35 0.28]';
+% w_g_pos = [0.35 -0.65 0.08]';
 pandaArms.wTog = eye(4);
 pandaArms.wTog(1:3, 4) = w_g_pos;
 
@@ -126,6 +128,7 @@ for t = 0:dt:end_time
     pandaArms = ComputeJacobians(pandaArms, mission);
     pandaArms = ComputeActivationFunctions(pandaArms,mission);
     pandaArms = ComputeTaskReferences(pandaArms,mission);
+    
 
     % main kinematic algorithm initialization
     % ydotbar order is [qdot_1, qdot_2, ..., qdot_7, xdot, ydot, zdot, omega_x, omega_y, omega_z]
@@ -192,7 +195,10 @@ for t = 0:dt:end_time
     % check if the mission phase should be changed
     mission.phase_time = mission.phase_time + dt;
     [pandaArms,mission] = UpdateMissionPhase(pandaArms, mission);
-   
+    
+
+    pandaArms.ArmR.dist_tools = norm(pandaArms.ArmR.wTt(1:3, 4) - pandaArms.ArmL.wTt(1:3, 4));
+
     % Update data plot
     plt = UpdateDataPlot(plt,pandaArms,t,loop, mission);
     loop = loop + 1;
@@ -217,8 +223,7 @@ for t = 0:dt:end_time
     % time. Remove to go as fast as possible
     % WARNING: MUST BE ENABLED IF CONTROLLING REAL ROBOT !
     % SlowdownToRealtime(dt);
-    
-end
+   end
 
 PrintPlot(plt, pandaArms);
 end
