@@ -35,7 +35,7 @@ if mission.phase == 2
     % wSo_L = [eye(3), zeros(3); -skew(tTo_L_pos), eye(3)]; 
     pandaArm.wJo = wSo * pandaArm.wJt;
 
-    pandaArm.Jrc = pandaArm.wJo;
+    % pandaArm.Jrc = pandaArm.wJo;
 end
 
 % joint limits 

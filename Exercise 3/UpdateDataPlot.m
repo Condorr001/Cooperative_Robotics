@@ -33,8 +33,6 @@ plt.arm2.xdot(:, loop) = pandaArm2.x;
 % Plot: manipulability task activation function
 
 % Left arm
-% activation rigid constarint
-plt.a_rc(:, loop) = diag(pandaArm1.A.rc);
 % activation joint limits 
 plt.arm1.a_jl(:, loop) = diag(pandaArm1.A.jl);
 % activation minimum altitude 
@@ -55,5 +53,11 @@ plt.arm2.a_tool(:, loop) = diag(pandaArm2.A.tool(1:6,1:6));
 plt.feasible_coop_xdot(:,loop) = pandaArm1.feasible_coop_xdot;
 plt.arm1.non_coop_xdot(:,loop) = pandaArm1.non_coop_xdot;
 plt.arm2.non_coop_xdot(:,loop) = pandaArm2.non_coop_xdot;
+
+% dist tool
+plt.arm1.dist_tools(:,loop) = pandaArm1.dist_tools;
+
+plt.arm1.feasible_q_dot(:,loop) = pandaArm1.feasible_coop_velocity_qdot;
+plt.arm2.feasible_q_dot(:,loop) = pandaArm2.feasible_coop_velocity_qdot;
 
 end

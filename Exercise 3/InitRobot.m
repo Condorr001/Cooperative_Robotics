@@ -39,5 +39,7 @@ pandaArm.A.rc = zeros(6);
 % plot variables
 pandaArm.feasible_coop_xdot = zeros(12,1);
 pandaArm.non_coop_xdot = zeros(6,1);
+pandaArm.dist_tools = 10000;
+pandaArm.feasible_coop_velocity_qdot = zeros(7,1);
 end
 

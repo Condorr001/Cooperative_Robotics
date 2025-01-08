@@ -28,10 +28,6 @@ switch mission.phase
         pandaArm.xdot.tool(1:3) = Saturate(pandaArm.xdot.tool(1:3), deg2rad(150));
         pandaArm.xdot.tool(4:6) = Saturate(pandaArm.xdot.tool(4:6), 2);  
     case 2
-        % Rigid Grasp Constraint
-        
-        pandaArm.xdot.rc = zeros(6,1); % I pass a vector of null linear and angular velocity
-        
         % Object position and orientation task reference
         [ang, lin] = CartError(pandaArm.wTog, pandaArm.wTo);
        

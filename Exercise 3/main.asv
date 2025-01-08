@@ -23,7 +23,7 @@ if real_robot == true
     hudpsRight.RemoteIPAddress = '127.0.0.1';
 else
     hudps = dsp.UDPSender('RemoteIPPort',1500);
-    hudps.RemoteIPAddress = '192.168.1.102';
+    hudps.RemoteIPAddress = '130.251.36.137';
 end
 %% TO HERE
 
@@ -32,6 +32,7 @@ wTb_left = eye(4); %fixed transformation word -> base left
 wTb_right = [rotation(0, 0, pi), [1.06, -0.01, 0]'; 0, 0, 0, 1]; %fixed transformation word -> base right
 pandaArm1 = InitRobot(model,wTb_left);
 pandaArm2 = InitRobot(model,wTb_right);
+% pandaArm2.q = [2.6973,-0.2762614,-0.0207622,-2.34352,-0.0305686,1.53975,0.753872]'
 
 % Preallocation
 plt = InitDataPlot(maxloops);
@@ -158,7 +159,6 @@ for t = 0:deltat:end_time
     
     % First Manipulator TPIK (left)
     % Task: Tool Move-To
-    % [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
     [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
     [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);  % JL
     [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, pandaArm1.xdot.tool, 0.0001, 0.01, 10); % tool position and orientation
@@ -170,7 +170,6 @@ for t = 0:deltat:end_time
 
     % Second manipulator TPIK (right)
     % Task: Tool Move-To
-    % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
     [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
     [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);  % JL
     [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, pandaArm2.xdot.tool, 0.0001, 0.01, 10); % tool position and orientation
@@ -237,30 +236,42 @@ for t = 0:deltat:end_time
         % computing feasible cooperative velocities        
         feasible_coop_xdot = [H1 zeros(6); zeros(6) H2] * (eye(12) - pinv(C)*C) * [coop_xdot1; coop_xdot2];
     
+        % plot variables
+        pandaArm1.feasible_coop_xdot = feasible_coop_xdot;
+        pandaArm2.feasible_coop_xdot = pandaArm1.feasible_coop_xdot;
+
+        % Compute Jacobians for cooperative joint velocity computation
+        coop_jacobian_L = pandaArm1.wJo; % Use Jacobian for object from Arm1
+        coop_jacobian_R = pandaArm2.wJo; % Use Jacobian for object from Arm2
+        
+        % Compute feasible cooperative joint velocities for plots
+        feasible_coop_velocity_q1 = pinv(coop_jacobian_L) * feasible_coop_xdot(1:6);
+        feasible_coop_velocity_q2 = pinv(coop_jacobian_R) * feasible_coop_xdot(7:12);
+        
+        % Store results in the robot structures for later use
+        pandaArm1.feasible_coop_velocity_qdot = feasible_coop_velocity_q1;
+        pandaArm2.feasible_coop_velocity_qdot = feasible_coop_velocity_q2;
+
+
         % Task: Arm1 (Left Arm) Cooperation
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, feasible_coop_xdot(1:6), 0.0001, 0.01, 10);  % CV
-        [Qp, ydotbar] = iCAT_task(pandaArm1.A.rc, pandaArm1.Jrc, Qp, ydotbar, pandaArm1.xdot.rc, 0.0001, 0.01, 10);  % RC
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.ma, pandaArm1.Jma, Qp, ydotbar, pandaArm1.xdot.alt, 0.0001, 0.01, 10);  % MA
         [Qp, ydotbar] = iCAT_task(pandaArm1.A.jl, pandaArm1.Jjl, Qp, ydotbar, pandaArm1.xdot.jl, 0.0001, 0.01, 10);   % JL
-        % [Qp, ydotbar] = iCAT_task(pandaArm1.A.tool, tool_jacobian_L, Qp, ydotbar, pandaArm1.xdot.tool, 0.0001, 0.01, 10);   % T
         [Qp, ydotbar] = iCAT_task(eye(7), eye(7), Qp, ydotbar, zeros(7,1), 0.0001,   0.01, 10);   % this task should be the last one
     
         % Task: Arm2 (Right Arm) Cooperation
         [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, feasible_coop_xdot(7:12), 0.0001, 0.01, 10); % CV
-        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.rc, pandaArm2.Jrc, Qp2, ydotbar2, pandaArm2.xdot.rc, 0.0001, 0.01, 10);  % RC
-        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, pandaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
+        [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.ma, paRndaArm2.Jma, Qp2, ydotbar2, pandaArm2.xdot.alt, 0.0001, 0.01, 10);  % MA
         [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.jl, pandaArm2.Jjl, Qp2, ydotbar2, pandaArm2.xdot.jl, 0.0001, 0.01, 10);   % JL
-        % [Qp2, ydotbar2] = iCAT_task(pandaArm2.A.tool, tool_jacobian_R, Qp2, ydotbar2, pandaArm2.xdot.tool, 0.0001, 0.01, 10);   % T
         [Qp2, ydotbar2] = iCAT_task(eye(7), eye(7), Qp2, ydotbar2, zeros(7,1), 0.0001,   0.01, 10);  % this task should be the last one  
     
     end 
 
-    % only for the plot
+    % plot variables
     pandaArm1.non_coop_xdot = non_coop_xdot1;
     pandaArm2.non_coop_xdot = non_coop_xdot2;
 
-    pandaArm1.feasible_coop_xdot = feasible_coop_xdot;
-
+    
     % get the two variables for integration
     pandaArm1.q_dot = ydotbar(1:7);
     pandaArm2.q_dot = ydotbar2(1:7);
@@ -291,9 +302,7 @@ for t = 0:deltat:end_time
 
     % Compute distance between tools for plotting
     pandaArm1.dist_tools = norm(pandaArm1.wTt(1:3, 4) - pandaArm2.wTt(1:3, 4));
-    % disp('dist_tools = ');
-    % disp(pandaArm1.dist_tools);
-
+  
     % Update data for plots
     plt = UpdateDataPlot(plt,pandaArm1,pandaArm2,t,loop, mission);
 
@@ -311,3 +320,4 @@ for t = 0:deltat:end_time
     
 end
 PrintPlot(plt);
+save('simdata')

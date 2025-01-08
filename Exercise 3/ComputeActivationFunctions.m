@@ -7,30 +7,20 @@ switch mission.phase
         % pandaArm.A.tool = ...;
         prev = mission.actions.go_to.tasks;
         current = prev;
-        task_rc = 0;
-
     case 2 % Move the object holding it firmly
-        % % Rigid Grasp Constraint
-        % 
         % % Move-To
 
         prev = mission.actions.go_to.tasks;
         current = mission.actions.coop_manip.tasks;
-        task_rc = 1;
         
     case 3 % STOP any motion 
         prev = mission.actions.coop_manip.tasks;
         current = mission.actions.end_motion.tasks;
-        task_rc = 1; 
 end
 
 % Move-To
 pandaArm.A.tool = eye(6) * ActionTransition("T", prev, current, mission.phase_time);
 
-% Rigid Grasp Constraint
-if task_rc == 1
-    pandaArm.A.rc = eye(6) * ActionTransition("RC", prev, current, mission.phase_time);
-end
 
 % INEQUALITY TASK ACTIVATION
 % Minimum Altitude Task ( > 0.15m, 0.05m delta )

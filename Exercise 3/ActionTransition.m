@@ -1,8 +1,8 @@
 function [A] = ActionTransition(taskname, previous, current, time)
 
-if (ismember(taskname, previous) == 0 && ismember(taskname, current) && taskname == "RC")
+if (ismember(taskname, previous) == 0 && ismember(taskname, current) && taskname == "T")
     A = 1;
-elseif ((ismember(taskname, previous) && ismember(taskname, current) == 0) && taskname == "RC")
+elseif ((ismember(taskname, previous) && ismember(taskname, current) == 0) && taskname == "T")
     A = 0;
 elseif (ismember(taskname, previous) && ismember(taskname, current))
     A = 1;
